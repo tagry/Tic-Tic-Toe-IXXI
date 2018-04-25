@@ -18,6 +18,14 @@ class Case(object):
         c.owner = self.owner
         return c
 
+    def __str__(self):
+        if self.owner == ME:
+            return "X"
+        elif self.owner == OPPONENT:
+            return "O"
+        else:
+            return "."
+
 
 class Grille(object):
     """
@@ -66,8 +74,12 @@ class Grille(object):
         pass
 
     def __str__(self):
-        # TODO
-        pass
+        s = ""
+        for i in range(3):
+            for j in range(3):
+                s += str(self.grille[i][j])
+            s += "|\n"
+        return s + "----"
 
 
 class Brain(object):
@@ -94,7 +106,8 @@ b = Brain(g)
 # game loop
 while True:
     opponent_row, opponent_col = [int(i) for i in input().split()]
-    g.set_case(opponent_row, opponent_col, OPPONENT)
+    if opponent_row >= 0:
+        g.set_case(opponent_row, opponent_col, OPPONENT)
     valid_action_count = int(input())
     moves = []
     for i in range(valid_action_count):
@@ -106,6 +119,8 @@ while True:
     m = b.play()
     # Write an action using print
     # To debug: print("Debug messages...", file=sys.stderr)
+
+    print(str(g), file=sys.stderr)
 
     g.set_case(m.i, m.j, ME)
 
