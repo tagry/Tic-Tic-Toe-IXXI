@@ -1,6 +1,7 @@
 # coding: utf-8
 import sys
 import math
+import random
 
 # Remplissage de case
 ME = 0
@@ -12,14 +13,21 @@ class Case(object):
     def __init__(self):
         self.owner = EMPTY
 
+    def copy(self):
+        c = self.__class__()
+        c.owner = self.owner
+        return c
+
 
 class Grille(object):
     """
     Une grille de morpion 3x3, vide
     """
-    def __init__(self):
-        self.grille = [[Case() for _ in xrange(3)] for _ in xrange(3)]
+
+    def __init__(self, class_case=Case):
+        self.grille = [[class_case() for _ in range(3)] for _ in range(3)]
         self.owner = EMPTY
+        self.class_case = class_case
 
     def set_case(self, i, j, o):
         """
@@ -58,18 +66,47 @@ class Grille(object):
         pass
 
     def __str__(self):
-        #TODO
+        # TODO
         pass
 
+
+class Brain(object):
+    def __init__(self, grid):
+        self.grille = grid
+        self.possible = None
+
+    def init_turn(self, moves):
+        self.possible = moves
+
+    def play(self):
+        return random.choice(self.possible)
+
+
+class Move(object):
+    def __init__(self, i, j):
+        self.i = i
+        self.j = j
+
+
+g = Grille()
+b = Brain(g)
 
 # game loop
 while True:
     opponent_row, opponent_col = [int(i) for i in input().split()]
+    g.set_case(opponent_row, opponent_col, OPPONENT)
     valid_action_count = int(input())
+    moves = []
     for i in range(valid_action_count):
         row, col = [int(j) for j in input().split()]
+        moves.append(Move(row, col))
 
+    b.init_turn(moves)
+
+    m = b.play()
     # Write an action using print
     # To debug: print("Debug messages...", file=sys.stderr)
 
-    print("0 0")
+    g.set_case(m.i, m.j, ME)
+
+    print("{i} {j}".format(**m.__dict__))
