@@ -27,6 +27,12 @@ class Case(object):
             return "."
 
 
+class Move(object):
+    def __init__(self, i, j):
+        self.i = i
+        self.j = j
+
+
 class Grille(object):
     """
     Une grille de morpion 3x3, vide
@@ -69,6 +75,17 @@ class Grille(object):
             elif i + j == 2 and g[0][2].owner == g[1][1].owner and g[0][2].owner == g[2][0].owner:
                 self.owner = g[1][1].owner
 
+    def coups_possibles(self):
+        """
+        :return: renvoie une liste de Move, coups possibles
+        """
+        result = []
+        for i in range(3):
+            for j in range(3):
+                if self.grille[i][j].owner == EMPTY:
+                    result.append(Move(i, j))
+        return result
+
     def copy(self):
         # TODO
         pass
@@ -82,7 +99,7 @@ class Grille(object):
         return s + "----"
 
 
-class Brain(object):
+class RandomBrain(object):
     def __init__(self, grid):
         self.grille = grid
         self.possible = None
@@ -94,14 +111,13 @@ class Brain(object):
         return random.choice(self.possible)
 
 
-class Move(object):
-    def __init__(self, i, j):
-        self.i = i
-        self.j = j
-
+class MinMaxBrain(RandomBrain):
+    def play(self):
+        # TODO
+        return random.choice(self.possible)
 
 g = Grille()
-b = Brain(g)
+b = RandomBrain(g)
 
 # game loop
 while True:
@@ -123,5 +139,6 @@ while True:
     print(str(g), file=sys.stderr)
 
     g.set_case(m.i, m.j, ME)
+    print(str(g.owner), file=sys.stderr)
 
     print("{i} {j}".format(**m.__dict__))
